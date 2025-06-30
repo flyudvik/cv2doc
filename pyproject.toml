@@ -1,0 +1,12 @@
+[project]
+name = "cv-to-doc"
+version = "0.1.0"
+description = "API to generate CV Word documents from JSON data"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.14",
+    "uvicorn>=0.35.0",
+    "python-docx>=0.8.11",
+    "pydantic[email]>=2.0.0",
+    "python-multipart>=0.0.5",
+]

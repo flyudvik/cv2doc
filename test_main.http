@@ -1,0 +1,85 @@
+# Test your FastAPI endpoints
+
+# Test root endpoint
+GET http://127.0.0.1:8000/
+Accept: application/json
+
+###
+
+# Test CV generation endpoint
+#POST http://127.0.0.1:8000/generate-cv
+POST https://home.fyn.rocks/generate-cv
+#POST http://192.168.0.180:8000/generate-cv
+Content-Type: application/json
+Accept: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+{
+  "full_name": "John Doe",
+  "phone_number": "+1 123-456-7890",
+  "phone_number_2": "+1 987-654-3210",
+  "email": "john.doe@example.com",
+  "nationality": "American",
+  "position": "Software Engineer",
+  "employment": "looking",
+  "location": "New York, USA",
+  "skills": [
+    "Python",
+    "JavaScript",
+    "Docker",
+    "FastAPI",
+    "React"
+  ],
+  "work_experience": [
+    {
+      "position": "Senior Developer",
+      "company_name": "Tech Solutions Inc.",
+      "location": "San Francisco, CA",
+      "responsibilities": "Developed and maintained web applications using Python and JavaScript. Led a team of 5 developers.",
+      "period": "2018-01 - 2023-05"
+    },
+    {
+      "position": "Junior Developer",
+      "company_name": "StartUp Co.",
+      "location": "Boston, MA",
+      "responsibilities": "Assisted in the development of mobile applications. Implemented new features and fixed bugs.",
+      "period": "2015-06 - 2017-12"
+    }
+  ],
+  "education": [
+    {
+      "institution": "MIT",
+      "period_from": 2010,
+      "period_to": 2014,
+      "specialization": "Computer Science",
+      "location": "Cambridge, MA",
+      "location_of_graduation": "Cambridge, MA"
+    }
+  ],
+  "language_proficiency": [
+    {
+      "language": "English",
+      "writing": 5,
+      "speaking": 5,
+      "understanding": 5
+    },
+    {
+      "language": "Spanish",
+      "writing": 3,
+      "speaking": 4,
+      "understanding": 4
+    }
+  ],
+  "marriage_status": "Single",
+  "have_children": "No",
+  "date_of_birth": "1990-05-15",
+  "place_of_birth": "Chicago, IL",
+  "residency": {
+    "city": "New York",
+    "country": "USA"
+  },
+  "age": 33,
+  "height": 180,
+  "weight": 75
+}
+
+###

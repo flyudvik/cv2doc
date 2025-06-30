@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  cv-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: amywoodehy/cv2doc
+    volumes:
+      - ./:/app
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
