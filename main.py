@@ -258,3 +258,15 @@ async def convert_docx2md(doc: UploadFile = File(...)):
         media_type="text/markdown",
         headers={"Content-Disposition": "attachment; filename=converted.md"},
     )
+
+
+@app.post("/read_file")
+async def read_file(doc: UploadFile = File(...)):
+    raw = await doc.read()
+    bytes_file = BytesIO(raw)
+    md = MarkItDown(enable_plugins=True)
+    result = md.convert(bytes_file)
+
+    return StreamingResponse(
+        StringIO(result.text_content),
+    )
