@@ -99,13 +99,14 @@ def json_to_docx(cv_data: CV, private=True) -> BytesIO:
     # Left cell for contact information
     left_cell = contact_table.cell(0, 0)
     contact_info = left_cell.paragraphs[0]
-    contact_info.add_run(f'Phone: {cv_data.phone_number if not private else ""}').bold = True
-    contact_info.add_run('\n')
-    if cv_data.phone_number_2:
-        contact_info.add_run(f'Secondary Phone: {cv_data.phone_number_2 if not private else ""}').bold = True
+    if not private:
+        contact_info.add_run(f'Phone: {cv_data.phone_number}').bold = True
         contact_info.add_run('\n')
-    contact_info.add_run(f'Email: {cv_data.email if not private else ""}').bold = True
-    contact_info.add_run('\n')
+        if cv_data.phone_number_2:
+            contact_info.add_run(f'Secondary Phone: {cv_data.phone_number_2}').bold = True
+            contact_info.add_run('\n')
+        contact_info.add_run(f'Email: {cv_data.email}').bold = True
+        contact_info.add_run('\n')
     if cv_data.location:
         contact_info.add_run(f'Location: {cv_data.location}').bold = True
 
