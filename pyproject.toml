@@ -9,4 +9,6 @@ dependencies = [
     "python-docx>=0.8.11",
     "pydantic[email]>=2.0.0",
     "python-multipart>=0.0.5",
+    "weasyprint>=65.1",
+    "markitdown[all]>=0.1.2",
 ]

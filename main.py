@@ -1,13 +1,15 @@
 from datetime import date
-from io import BytesIO
+from io import BytesIO, StringIO
 from typing import List, Optional, Literal
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Pt, Inches
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import Response
+from markitdown import MarkItDown
 from pydantic import BaseModel, Field, EmailStr
+from starlette.responses import StreamingResponse
 
 app = FastAPI(
     title="CV Generator API",
@@ -69,7 +71,7 @@ class CV(BaseModel):
     weight: Optional[int] = Field(None, ge=2, description="Weight in kilograms")
 
 
-def json_to_docx(cv_data: CV) -> BytesIO:
+def json_to_docx(cv_data: CV, private=True) -> BytesIO:
     """Convert CV JSON data directly to Word document format"""
     doc = Document()
 
@@ -97,12 +99,12 @@ def json_to_docx(cv_data: CV) -> BytesIO:
     # Left cell for contact information
     left_cell = contact_table.cell(0, 0)
     contact_info = left_cell.paragraphs[0]
-    contact_info.add_run(f'Phone: {cv_data.phone_number}').bold = True
+    contact_info.add_run(f'Phone: {cv_data.phone_number if not private else ""}').bold = True
     contact_info.add_run('\n')
     if cv_data.phone_number_2:
-        contact_info.add_run(f'Secondary Phone: {cv_data.phone_number_2}').bold = True
+        contact_info.add_run(f'Secondary Phone: {cv_data.phone_number_2 if not private else ""}').bold = True
         contact_info.add_run('\n')
-    contact_info.add_run(f'Email: {cv_data.email}').bold = True
+    contact_info.add_run(f'Email: {cv_data.email if not private else ""}').bold = True
     contact_info.add_run('\n')
     if cv_data.location:
         contact_info.add_run(f'Location: {cv_data.location}').bold = True
@@ -227,11 +229,12 @@ async def root():
     }
 
 
-@app.post("/generate-cv", response_class=Response)
-async def generate_cv(cv_data: CV):
+@app.post("/generate-cv", response_class=Response, )
+async def generate_cv(cv_data: CV, private: bool = True):
+    print(f"Private: {private}")
     try:
         # Convert JSON directly to Word document
-        docx_bytes = json_to_docx(cv_data)
+        docx_bytes = json_to_docx(cv_data, private)
 
         # Return the Word document
         return Response(
@@ -241,3 +244,17 @@ async def generate_cv(cv_data: CV):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating CV: {str(e)}")
+
+
+@app.post("/docx2md")
+async def convert_docx2md(doc: UploadFile = File(...)):
+    raw = await doc.read()  # bytes
+    bytes_file = BytesIO(raw)  # DOCX → HTML string
+    md = MarkItDown(enable_plugins=True)
+    result = md.convert(bytes_file)
+
+    return StreamingResponse(
+        StringIO(result.text_content),
+        media_type="text/markdown",
+        headers={"Content-Disposition": "attachment; filename=converted.md"},
+    )
